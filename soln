@@ -1,0 +1,79 @@
+/*
+A retailer offers a rewards program to its customers, awarding points based on each recorded purchase.
+A customer receives 2 points for every dollar spent over $100 in each transaction, plus 1 point for every dollar spent over $50 in each transaction
+(e.g. a $120 purchase = 2x$20 + 1x$50 = 90 points).
+Given a record of every transaction during a three month period, calculate the reward points earned for each customer per month and total.
+*/
+
+Soln-
+
+import java.util.*;
+public class HelloWorld{
+     public static void main(String []args){
+        System.out.println("Hello World");
+        /*
+        This monthlyTransactionMap represents monthly transaction for each customer Id 
+        For eg -
+        during month 1 ==> for customer1, cost spent is 60$, for customer2 cost spent is 30$ , for customer3 cost spent is 80$
+        during month 2 ==> for customer1, cost spent is 40$, for customer2 cost spent is 70$ , for customer3 cost spent is 90$
+        during month 3 ==> for customer1, cost spent is 60$, for customer2 cost spent is 60$ 
+        */
+        Map<Integer, List<Map.Entry<Integer,Integer>>> monthlyTransactionMap = new HashMap<>();
+        monthlyTransactionMap.put(1, new ArrayList<Map.Entry<Integer,Integer>>());
+        monthlyTransactionMap.put(2, new ArrayList<Map.Entry<Integer,Integer>>());
+        monthlyTransactionMap.put(3, new ArrayList<Map.Entry<Integer,Integer>>());
+        AbstractMap.SimpleEntry<Integer, Integer> entryfor1stmonth1 = new AbstractMap.SimpleEntry<>(1, 60);
+        AbstractMap.SimpleEntry<Integer, Integer> entryfor1stmonth2 = new AbstractMap.SimpleEntry<>(2, 30);
+        AbstractMap.SimpleEntry<Integer, Integer> entryfor1stmonth3 = new AbstractMap.SimpleEntry<>(3, 80);
+        monthlyTransactionMap.get(1).add(entryfor1stmonth1);
+        monthlyTransactionMap.get(1).add(entryfor1stmonth2);
+        monthlyTransactionMap.get(1).add(entryfor1stmonth3);
+        
+        AbstractMap.SimpleEntry<Integer, Integer> entryfor2ndtmonth1 = new AbstractMap.SimpleEntry<>(1, 40);
+        AbstractMap.SimpleEntry<Integer, Integer> entryfor2ndtmonth2 = new AbstractMap.SimpleEntry<>(2, 70);
+        AbstractMap.SimpleEntry<Integer, Integer> entryfor2ndtmonth3 = new AbstractMap.SimpleEntry<>(3, 90);
+        monthlyTransactionMap.get(2).add(entryfor2ndtmonth1);
+        monthlyTransactionMap.get(2).add(entryfor2ndtmonth2);
+        monthlyTransactionMap.get(2).add(entryfor2ndtmonth3);
+        
+        AbstractMap.SimpleEntry<Integer, Integer> entryfor3rdtmonth1 = new AbstractMap.SimpleEntry<>(1, 60);
+        AbstractMap.SimpleEntry<Integer, Integer> entryfor3rdtmonth2 = new AbstractMap.SimpleEntry<>(2, 60);
+        monthlyTransactionMap.get(3).add(entryfor3rdtmonth1);
+        monthlyTransactionMap.get(3).add(entryfor3rdtmonth2);
+        totalRewardPerCustomer(monthlyTransactionMap);
+     }
+     
+     public static Map<Integer, Integer> totalRewardPerCustomer(Map<Integer, List<Map.Entry<Integer,Integer>>> monthlyTransactionMap ){
+         Map<Integer,Integer> totalCostPerCustomerMap = new HashMap<>();
+         // totalCostPerCustomerMap represents the total reward points earned for each customer
+         for(Map.Entry<Integer,List<Map.Entry<Integer,Integer>>> entry : monthlyTransactionMap.entrySet()){
+             int month = entry.getKey();
+             List<Map.Entry<Integer,Integer>> totalCost = entry.getValue();
+             for(Map.Entry<Integer,Integer> temp: totalCost){
+                 int customerId = temp.getKey();
+                 int cost = temp.getValue();
+                 if(!totalCostPerCustomerMap.containsKey(customerId)){
+                     totalCostPerCustomerMap.put(customerId,cost);
+                 } else{
+            totalCostPerCustomerMap.put(customerId,totalCostPerCustomerMap.get(customerId)+cost);
+                 }
+             }
+         }
+         
+         for(Map.Entry<Integer,Integer> entry: totalCostPerCustomerMap.entrySet()){
+             int customerId = entry.getKey();
+             int cost = entry.getValue();
+             int rewardPoint = findTotalReward(cost);
+             totalCostPerCustomerMap.put(customerId, rewardPoint);
+         }
+         return totalCostPerCustomerMap;
+     }
+     
+     public static int findTotalReward(int cost){
+         int perHundredRewardPoint = cost -100;
+         int perFiftyRewardPoint = cost/50 -1;
+         return 2*perHundredRewardPoint + perFiftyRewardPoint;
+     }
+     
+}
+
